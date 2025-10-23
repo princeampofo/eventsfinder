@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../services/database_service.dart';
 import '../services/storage_service.dart';
 import '../models/event.dart';
+import 'event_details.dart';
 
 class DiscoverScreen extends StatefulWidget {
   const DiscoverScreen({super.key});
@@ -325,7 +326,12 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                               elevation: 2,
                               child: InkWell(
                                 onTap: () {
-                                  debugPrint('Tapped on event: ${event.title}');
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => EventDetailsScreen(event: event),
+                                    ),
+                                  );
                                 },
                                 borderRadius: BorderRadius.circular(12),
                                 child: Column(
