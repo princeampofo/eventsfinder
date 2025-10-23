@@ -3,6 +3,7 @@ import '../services/database_service.dart';
 import '../services/storage_service.dart';
 import '../models/user.dart';
 import 'signup.dart';
+import 'main_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -55,10 +56,12 @@ class _LoginScreenState extends State<LoginScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Login successful!')),
         );
-        
-       debugPrint('Logged in user ID: ${user.id}');
 
         // Navigate to main screen (to be implemented)
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const MainScreen()),
+        );
       }
     } else {
       // Show error message

@@ -139,5 +139,41 @@ class DatabaseHelper {
       'isFavorite': 0,
       'imageUrl': 'https://images.unsplash.com/photo-1531243269054-5ebf6f34081e?w=800',
     });
+
+    await db.insert('events', {
+      'title': 'Jazz Evening',
+      'type': 'Concert',
+      'date': '2025-11-25',
+      'city': 'New Orleans',
+      'venue': 'Jazz Club',
+      'price': 30.0,
+      'description': 'Enjoy a night of smooth jazz performances.',
+      'isFavorite': 0,
+      'imageUrl': 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=800',
+    });
+
+    await db.insert('events', {
+      'title': 'Culinary Arts Workshop',
+      'type': 'Workshop',
+      'date': '2025-11-30',
+      'city': 'San Francisco',
+      'venue': 'Culinary School',
+      'price': 75.0,
+      'description': 'Master the art of cooking with expert chefs.',
+      'isFavorite': 0,
+      'imageUrl': 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800',
+    });
+
+    await db.insert('events', {
+      'title': 'Marathon 2025',
+      'type': 'Sports',
+      'date': '2025-12-05',
+      'city': 'Boston',
+      'venue': 'City Park',
+      'price': 40.0,
+      'description': 'Participate in the annual city marathon event.',
+      'isFavorite': 0,
+      'imageUrl': 'https://images.unsplash.com/photo-1508609349937-5ec4ae374ebf?w=800',
+    });
   }
 }
