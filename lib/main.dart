@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'services/storage_service.dart';
 import 'screens/login.dart';
+import 'screens/main_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -25,7 +26,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-// Splash Screen
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -44,7 +44,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   // Check if user is already logged in
   void checkLoginStatus() async {
-    // Wait for 2 seconds to show splash screen
+    // Simulate loading delay
     await Future.delayed(const Duration(seconds: 2));
     
     // Check if user is logged in
@@ -52,9 +52,11 @@ class _SplashScreenState extends State<SplashScreen> {
     
     if (mounted) {
       if (isLoggedIn) {
-        // Navigate to main screen( to be implemented)
-        debugPrint('User is already logged in');
-        
+        // Navigate to main screen
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const MainScreen()),
+        );
       } else {
         // Navigate to login screen
         Navigator.pushReplacement(
