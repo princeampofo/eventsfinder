@@ -9,6 +9,7 @@ class Event {
   double price;
   String description;
   int isFavorite;
+  String? imageUrl;  // Add image URL field
 
   Event({
     this.id,
@@ -20,6 +21,7 @@ class Event {
     required this.price,
     required this.description,
     this.isFavorite = 0,
+    this.imageUrl,  // Optional image URL
   });
 
   // Convert Event to Map for database
@@ -34,6 +36,7 @@ class Event {
       'price': price,
       'description': description,
       'isFavorite': isFavorite,
+      'imageUrl': imageUrl,
     };
   }
 
@@ -49,6 +52,7 @@ class Event {
       price: map['price'],
       description: map['description'],
       isFavorite: map['isFavorite'] ?? 0,
+      imageUrl: map['imageUrl'],
     );
   }
 }
