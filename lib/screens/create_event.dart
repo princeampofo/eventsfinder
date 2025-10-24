@@ -262,7 +262,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
               ),
               keyboardType: TextInputType.url,
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: 32),      
             // Publish button
             SizedBox(
               width: double.infinity,
