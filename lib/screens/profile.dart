@@ -589,36 +589,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           
           const SizedBox(height: 24),
-          
-          // Theme preview info
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: isDarkMode
-                  ? Colors.grey[800]
-                  : const Color(0xFF4F46E5).withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  isDarkMode ? Icons.nights_stay : Icons.wb_sunny,
-                  color: isDarkMode ? Colors.white : const Color(0xFF4F46E5),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Text(
-                    isDarkMode
-                        ? 'Using dark theme for better viewing in low light'
-                        : 'Using light theme for better viewing in daylight',
-                    style: TextStyle(
-                      color: isDarkMode ? Colors.white : Colors.black87,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
         ],
       ),
     );

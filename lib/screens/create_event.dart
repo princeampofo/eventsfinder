@@ -189,7 +189,8 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                 child: Text(
                   selectedDate ?? 'Select date',
                   style: TextStyle(
-                    color: selectedDate == null ? Colors.grey : Colors.black,
+                    // should be white in dark mode
+                    color: Theme.of(context).brightness == Brightness.dark ? Colors.white : selectedDate == null ? Colors.grey : Colors.black,
                   ),
                 ),
               ),

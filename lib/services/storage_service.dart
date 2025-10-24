@@ -22,51 +22,10 @@ class StorageService {
     await prefs.remove('loggedInUserId');
   }
 
-  // Save cached events
-  Future<void> cacheEvents(List<Map<String, dynamic>> events) async {
-    final prefs = await SharedPreferences.getInstance();
-    String jsonString = jsonEncode(events);
-    await prefs.setString('cachedEvents', jsonString);
-  }
-
-  // Get cached events
-  Future<List<Map<String, dynamic>>> getCachedEvents() async {
-    final prefs = await SharedPreferences.getInstance();
-    String? jsonString = prefs.getString('cachedEvents');
-    
-    if (jsonString == null) {
-      return [];
-    }
-    
-    List<dynamic> jsonList = jsonDecode(jsonString);
-    return jsonList.cast<Map<String, dynamic>>();
-  }
-
-
   // Check if user is logged in
   Future<bool> isLoggedIn() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.containsKey('loggedInUserId');
-  }
-
-  // Save favorite event IDs
-  Future<void> saveFavorites(List<int> favoriteIds) async {
-    final prefs = await SharedPreferences.getInstance();
-    String jsonString = jsonEncode(favoriteIds);
-    await prefs.setString('favoriteEvents', jsonString);
-  }
-
-  // Get favorite event IDs
-  Future<List<int>> getFavorites() async {
-    final prefs = await SharedPreferences.getInstance();
-    String? jsonString = prefs.getString('favoriteEvents');
-    
-    if (jsonString == null) {
-      return [];
-    }
-    
-    List<dynamic> jsonList = jsonDecode(jsonString);
-    return jsonList.cast<int>();
   }
 
   // Save dark mode preference

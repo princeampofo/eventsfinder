@@ -66,9 +66,6 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
       
       // Get all cities
       cities = await dbService.getCities();
-      
-      // Cache events for offline use
-      await storageService.cacheEvents(eventMaps);
     }
     
     setState(() {
