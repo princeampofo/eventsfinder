@@ -24,6 +24,22 @@ class DatabaseService {
     );
   }
 
+  // Get favorite events
+  Future<List<Event>> getFavorites() async {
+    final db = await _dbHelper.database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      'events',
+      where: 'isFavorite = ?',
+      whereArgs: [1],
+    );
+    
+    List<Event> events = [];
+    for (var map in maps) {
+      events.add(Event.fromMap(map));
+    }
+    return events;
+  }
+
   // Get filtered events
   Future<List<Event>> getFilteredEvents({
     String? type,
@@ -123,6 +139,21 @@ class DatabaseService {
       whereArgs: [email],
     );
     
+    if (maps.isEmpty) {
+      return null;
+    }
+    return User.fromMap(maps.first);
+  }
+
+  // get user by id
+  Future<User?> getUserById(int id) async {
+    final db = await _dbHelper.database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      'users',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+
     if (maps.isEmpty) {
       return null;
     }

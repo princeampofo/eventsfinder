@@ -6,7 +6,8 @@ import 'signup.dart';
 import 'main_screen.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  const LoginScreen({super.key, required this.toggleTheme});
+  final Function(bool) toggleTheme;
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -53,14 +54,10 @@ class _LoginScreenState extends State<LoginScreen> {
       
       // Show success message
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Login successful!')),
-        );
-
-        // Navigate to main screen (to be implemented)
+        // Navigate to main screen
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const MainScreen()),
+          MaterialPageRoute(builder: (context) => MainScreen(toggleTheme: widget.toggleTheme)),
         );
       }
     } else {
@@ -75,8 +72,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Get current theme colors
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: colorScheme.surface,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -85,29 +86,29 @@ class _LoginScreenState extends State<LoginScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 // App logo/icon
-                const Icon(
+                Icon(
                   Icons.event,
                   size: 80,
-                  color: Color(0xFF4F46E5),
+                  color: colorScheme.primary,
                 ),
                 const SizedBox(height: 20),
                 
                 // Title
-                const Text(
+                Text(
                   'Local Events Finder',
                   style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF4F46E5),
+                    color: colorScheme.primary,
                   ),
                 ),
                 const SizedBox(height: 10),
                 
-                const Text(
+                Text(
                   'Sign in to discover events',
                   style: TextStyle(
                     fontSize: 16,
-                    color: Colors.grey,
+                    color: colorScheme.onSurface.withValues(alpha:0.6),
                   ),
                 ),
                 const SizedBox(height: 40),
@@ -147,18 +148,21 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: ElevatedButton(
                     onPressed: isLoading ? null : loginUser,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF4F46E5),
+                      backgroundColor: colorScheme.primary,
+                      foregroundColor: colorScheme.onPrimary,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                     child: isLoading
-                        ? const CircularProgressIndicator(color: Colors.white)
-                        : const Text(
+                        ? CircularProgressIndicator(
+                            color: colorScheme.onPrimary,
+                          )
+                        : Text(
                             'Login',
                             style: TextStyle(
                               fontSize: 18,
-                              color: Colors.white,
+                              color: colorScheme.onPrimary,
                             ),
                           ),
                   ),
@@ -169,28 +173,31 @@ class _LoginScreenState extends State<LoginScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text("Don't have an account? "),
+                    Text(
+                      "Don't have an account? ",
+                      style: TextStyle(color: colorScheme.onSurface),
+                    ),
                     GestureDetector(
                       onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const SignupScreen(),
+                            builder: (context) => SignupScreen(
+                              toggleTheme: widget.toggleTheme,
+                            ),
                           ),
                         );
                       },
-                      child: const Text(
+                      child: Text(
                         'Sign Up',
                         style: TextStyle(
-                          color: Color(0xFF4F46E5),
+                          color: colorScheme.primary,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
                   ],
                 ),
-                
-                const SizedBox(height: 20),
               ],
             ),
           ),

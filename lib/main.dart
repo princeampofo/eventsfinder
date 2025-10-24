@@ -7,8 +7,38 @@ void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  bool isDarkMode = false;
+  final StorageService storageService = StorageService();
+
+  @override
+  void initState() {
+    super.initState();
+    loadThemePreference();
+  }
+
+  // Load saved theme preference
+  void loadThemePreference() async {
+    bool savedDarkMode = await storageService.getDarkMode();
+    setState(() {
+      isDarkMode = savedDarkMode;
+    });
+  }
+
+  // Toggle theme
+  void toggleTheme(bool isDark) {
+    setState(() {
+      isDarkMode = isDark;
+    });
+    storageService.setDarkMode(isDark);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,17 +47,31 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
+        brightness: Brightness.light,
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFF4F46E5),
+          brightness: Brightness.light,
         ),
       ),
-      home: const SplashScreen(),
+      darkTheme: ThemeData(
+        useMaterial3: true,
+        brightness: Brightness.dark,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF4F46E5),
+          brightness: Brightness.dark,
+        ),
+      ),
+      themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
+      home: SplashScreen(toggleTheme: toggleTheme),
     );
   }
 }
 
+// Splash Screen
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
+  final Function(bool) toggleTheme;
+
+  const SplashScreen({super.key, required this.toggleTheme});
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -44,6 +88,10 @@ class _SplashScreenState extends State<SplashScreen> {
 
   // Check if user is already logged in
   void checkLoginStatus() async {
+    // Load theme preference first
+    bool savedDarkMode = await storageService.getDarkMode();
+    widget.toggleTheme(savedDarkMode);
+    
     // Simulate loading delay
     await Future.delayed(const Duration(seconds: 2));
     
@@ -55,13 +103,17 @@ class _SplashScreenState extends State<SplashScreen> {
         // Navigate to main screen
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const MainScreen()),
+          MaterialPageRoute(
+            builder: (context) => MainScreen(toggleTheme: widget.toggleTheme),
+          ),
         );
       } else {
         // Navigate to login screen
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const LoginScreen()),
+          MaterialPageRoute(
+            builder: (context) => LoginScreen(toggleTheme: widget.toggleTheme),
+          ),
         );
       }
     }
@@ -69,8 +121,11 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Get current theme colors
+    final colorScheme = Theme.of(context).colorScheme;
+    
     return Scaffold(
-      backgroundColor: const Color(0xFF4F46E5),
+      backgroundColor: colorScheme.primary,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -79,7 +134,7 @@ class _SplashScreenState extends State<SplashScreen> {
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: colorScheme.onPrimary,
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
@@ -89,40 +144,40 @@ class _SplashScreenState extends State<SplashScreen> {
                   ),
                 ],
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.event,
                 size: 80,
-                color: Color(0xFF4F46E5),
+                color: colorScheme.primary,
               ),
             ),
             
             const SizedBox(height: 32),
             
             // App name
-            const Text(
+            Text(
               'Local Events Finder',
               style: TextStyle(
                 fontSize: 32,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: colorScheme.onPrimary,
               ),
             ),
             
             const SizedBox(height: 16),
             
-            const Text(
+            Text(
               'Discover events near you',
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.white70,
+                color: colorScheme.onPrimary.withValues(alpha: 0.8),
               ),
             ),
             
             const SizedBox(height: 48),
             
             // Loading indicator
-            const CircularProgressIndicator(
-              color: Colors.white,
+            CircularProgressIndicator(
+              color: colorScheme.onPrimary,
             ),
           ],
         ),

@@ -5,7 +5,9 @@ import 'tickets.dart';
 import 'profile.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+  final Function(bool) toggleTheme;
+  
+  const MainScreen({super.key, required this.toggleTheme});
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -15,12 +17,18 @@ class _MainScreenState extends State<MainScreen> {
   int currentIndex = 0;
   
   // List of screens for bottom navigation
-  final List<Widget> screens = [
-    const DiscoverScreen(),
-    const CreateEventScreen(),
-    const TicketsScreen(),
-    const ProfileScreen(),
-  ];
+  late final List<Widget> screens;
+
+  @override
+  void initState() {
+    super.initState();
+    screens = [
+      const DiscoverScreen(),
+      const CreateEventScreen(),
+      const TicketsScreen(),
+      ProfileScreen(toggleTheme: widget.toggleTheme),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {

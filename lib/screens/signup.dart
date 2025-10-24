@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import '../services/database_service.dart';
+import 'main_screen.dart';
+import '../services/storage_service.dart';
 
 class SignupScreen extends StatefulWidget {
-  const SignupScreen({super.key});
+  final Function(bool) toggleTheme;
+  
+  const SignupScreen({super.key, required this.toggleTheme});
 
   @override
   State<SignupScreen> createState() => _SignupScreenState();
@@ -16,6 +20,8 @@ class _SignupScreenState extends State<SignupScreen> {
   
   final DatabaseService dbService = DatabaseService();
   bool isLoading = false;
+
+  final StorageService storageService = StorageService();
 
   // Signup button pressed
   void signupUser() async {
@@ -68,19 +74,31 @@ class _SignupScreenState extends State<SignupScreen> {
         const SnackBar(content: Text('Account created successfully!')),
       );
       
-      // Go back to login screen
-      Navigator.pop(context);
+      // Navigate to main screen
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => MainScreen(toggleTheme: widget.toggleTheme)),
+      );
+
+      // set isLoggedIn to true
+      await storageService.saveUserId(  
+        await dbService.getUserByEmail(email).then((user) => user!.id!),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    // Get current theme colors
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        iconTheme: const IconThemeData(color: Color(0xFF4F46E5)),
+        iconTheme: IconThemeData(color: colorScheme.primary),
       ),
       body: SafeArea(
         child: Center(
@@ -90,29 +108,29 @@ class _SignupScreenState extends State<SignupScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 // App logo/icon
-                const Icon(
+                Icon(
                   Icons.person_add,
                   size: 80,
-                  color: Color(0xFF4F46E5),
+                  color: colorScheme.primary,
                 ),
                 const SizedBox(height: 20),
                 
                 // Title
-                const Text(
+                Text(
                   'Create Account',
                   style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF4F46E5),
+                    color: colorScheme.primary,
                   ),
                 ),
                 const SizedBox(height: 10),
                 
-                const Text(
+                Text(
                   'Join us to discover amazing events',
                   style: TextStyle(
                     fontSize: 16,
-                    color: Colors.grey,
+                    color: colorScheme.onSurface.withValues(alpha:0.6),
                   ),
                 ),
                 const SizedBox(height: 40),
@@ -166,6 +184,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     onPressed: isLoading ? null : signupUser,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF10B981),
+                      foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
