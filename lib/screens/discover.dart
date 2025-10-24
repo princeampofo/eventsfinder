@@ -225,7 +225,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                       ),
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 20,
+                          horizontal: 18,
                           vertical: 12,
                         ),
                       ),
