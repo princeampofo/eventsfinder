@@ -17,6 +17,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
   final StorageService storageService = StorageService();
   
   late Event event;
+  int? currentUserId;
 
   @override
   void initState() {
@@ -24,22 +25,26 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     event = widget.event;
   }
 
+  // Load user ID and check favorite status
+  void loadUserAndFavoriteStatus() async {
+    currentUserId = await storageService.getUserId();
+    
+    if (currentUserId != null) {
+      bool isFav = await dbService.isFavorite(event.id!, currentUserId!);
+      setState(() {
+        event.isFavorite = isFav ? 1 : 0;
+      });
+    }
+  }
+
   // Toggle favorite
-  void toggleFavorite() async {
+  void toggleFavorite() async { 
     bool newStatus = event.isFavorite == 0;
-    await dbService.toggleFavorite(event.id!, newStatus);
+    await dbService.toggleFavorite(event.id!, currentUserId!, newStatus);
     
     setState(() {
       event.isFavorite = newStatus ? 1 : 0;
     });
-    
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          newStatus ? 'Added to favorites!' : 'Removed from favorites',
-        ),
-      ),
-    );
   }
 
   // Get ticket

@@ -8,7 +8,7 @@ class Event {
   String venue;
   double price;
   String description;
-  int isFavorite;
+  int? isFavorite;
   String? imageUrl;  // Add image URL field
 
   Event({
@@ -20,7 +20,7 @@ class Event {
     required this.venue,
     required this.price,
     required this.description,
-    this.isFavorite = 0,
+    this.isFavorite,
     this.imageUrl,  // Optional image URL
   });
 
@@ -51,7 +51,7 @@ class Event {
       venue: map['venue'],
       price: map['price'],
       description: map['description'],
-      isFavorite: map['isFavorite'] ?? 0,
+      isFavorite: map['isFavorite'],
       imageUrl: map['imageUrl'],
     );
   }

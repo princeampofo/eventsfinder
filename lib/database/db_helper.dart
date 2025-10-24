@@ -48,7 +48,6 @@ class DatabaseHelper {
         venue TEXT,
         price REAL,
         description TEXT,
-        isFavorite INTEGER,
         imageUrl TEXT
       )
     ''');
@@ -88,7 +87,6 @@ class DatabaseHelper {
       'venue': 'Downtown Arena',
       'price': 25.0,
       'description': 'A live indie concert featuring local bands.',
-      'isFavorite': 0,
       'imageUrl': 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800',
     });
 
@@ -100,7 +98,6 @@ class DatabaseHelper {
       'venue': 'Creative Studio',
       'price': 50.0,
       'description': 'Learn the basics of photography from professionals.',
-      'isFavorite': 0,
       'imageUrl': 'https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=800',
     });
 
@@ -112,7 +109,6 @@ class DatabaseHelper {
       'venue': 'City Stadium',
       'price': 15.0,
       'description': 'Join us for an exciting community soccer match.',
-      'isFavorite': 0,
       'imageUrl': 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=800',
     });
 
@@ -124,7 +120,6 @@ class DatabaseHelper {
       'venue': 'Tech Hub',
       'price': 0.0,
       'description': 'Network with tech professionals and entrepreneurs.',
-      'isFavorite': 0,
       'imageUrl': 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800',
     });
 
@@ -136,7 +131,6 @@ class DatabaseHelper {
       'venue': 'Modern Art Gallery',
       'price': 20.0,
       'description': 'Experience contemporary art from emerging artists.',
-      'isFavorite': 0,
       'imageUrl': 'https://images.unsplash.com/photo-1531243269054-5ebf6f34081e?w=800',
     });
 
@@ -148,7 +142,6 @@ class DatabaseHelper {
       'venue': 'Jazz Club',
       'price': 30.0,
       'description': 'Enjoy a night of smooth jazz performances.',
-      'isFavorite': 0,
       'imageUrl': 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=800',
     });
 
@@ -160,7 +153,6 @@ class DatabaseHelper {
       'venue': 'Culinary School',
       'price': 75.0,
       'description': 'Master the art of cooking with expert chefs.',
-      'isFavorite': 0,
       'imageUrl': 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800',
     });
 
@@ -172,7 +164,6 @@ class DatabaseHelper {
       'venue': 'City Park',
       'price': 40.0,
       'description': 'Participate in the annual city marathon event.',
-      'isFavorite': 0,
       'imageUrl': 'https://images.unsplash.com/photo-1508609349937-5ec4ae374ebf?w=800',
     });
   }

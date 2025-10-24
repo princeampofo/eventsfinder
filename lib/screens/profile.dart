@@ -255,6 +255,7 @@ class FavoritesScreen extends StatefulWidget {
 
 class _FavoritesScreenState extends State<FavoritesScreen> {
   final DatabaseService dbService = DatabaseService();
+  final StorageService storageService = StorageService();
   
   List<Event> favoriteEvents = [];
   bool isLoading = true;
@@ -265,13 +266,17 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     loadFavorites();
   }
 
-  // Load favorite events
+  // Load favorite events for current user
   void loadFavorites() async {
     setState(() {
       isLoading = true;
     });
     
-    favoriteEvents = await dbService.getFavorites();
+    int? userId = await storageService.getUserId();
+    
+    if (userId != null) {
+      favoriteEvents = await dbService.getFavorites(userId);
+    }
     
     setState(() {
       isLoading = false;

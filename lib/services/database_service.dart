@@ -1,3 +1,4 @@
+import 'package:sqflite/sqflite.dart';
 import '../database/db_helper.dart';
 import '../models/event.dart';
 import '../models/user.dart';
@@ -13,31 +14,69 @@ class DatabaseService {
     return await db.insert('users', user);
   }
 
-  // Toggle favorite status
-  Future<void> toggleFavorite(int id, bool status) async {
+  // Toggle favorite status for specific user
+  Future<void> toggleFavorite(int eventId, int userId, bool status) async {
     final db = await _dbHelper.database;
-    await db.update(
-      'events',
-      {'isFavorite': status ? 1 : 0},
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    
+    if (status) {
+      // Add to favorites table
+      await db.insert(
+        'favorites',
+        {'userId': userId, 'eventId': eventId},
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    } else {
+      // Remove from favorites table
+      await db.delete(
+        'favorites',
+        where: 'userId = ? AND eventId = ?',
+        whereArgs: [userId, eventId],
+      );
+    }
   }
 
-  // Get favorite events
-  Future<List<Event>> getFavorites() async {
+  // Get favorite events for specific user
+  Future<List<Event>> getFavorites(int userId) async {
     final db = await _dbHelper.database;
-    final List<Map<String, dynamic>> maps = await db.query(
-      'events',
-      where: 'isFavorite = ?',
-      whereArgs: [1],
-    );
+    
+    // Join favorites table with events table
+    final List<Map<String, dynamic>> maps = await db.rawQuery('''
+      SELECT events.* 
+      FROM events 
+      INNER JOIN favorites ON events.id = favorites.eventId 
+      WHERE favorites.userId = ?
+    ''', [userId]);
     
     List<Event> events = [];
     for (var map in maps) {
       events.add(Event.fromMap(map));
     }
     return events;
+  }
+
+  // Check if event is favorited by user
+  Future<bool> isFavorite(int eventId, int userId) async {
+    final db = await _dbHelper.database;
+    final List<Map<String, dynamic>> result = await db.query(
+      'favorites',
+      where: 'userId = ? AND eventId = ?',
+      whereArgs: [userId, eventId],
+    );
+    return result.isNotEmpty;
+  }
+
+  // Get events with favorite status for specific user
+  Future<List<Map<String, dynamic>>> getEventsWithFavoriteStatus(int userId) async {
+    final db = await _dbHelper.database;
+    
+    final List<Map<String, dynamic>> maps = await db.rawQuery('''
+      SELECT events.*, 
+             CASE WHEN favorites.eventId IS NOT NULL THEN 1 ELSE 0 END as isFavorite
+      FROM events 
+      LEFT JOIN favorites ON events.id = favorites.eventId AND favorites.userId = ?
+    ''', [userId]);
+    
+    return maps;
   }
 
   // Get filtered events
@@ -128,6 +167,19 @@ class DatabaseService {
   Future<int> addTicket(Map<String, dynamic> ticket) async {
     final db = await _dbHelper.database;
     return await db.insert('tickets', ticket);
+  }
+
+  // Get tickets for user
+  Future<List<Map<String, dynamic>>> getUserTickets(int userId) async {
+    final db = await _dbHelper.database;
+    final List<Map<String, dynamic>> tickets = await db.rawQuery('''
+      SELECT tickets.*, events.title, events.date, events.venue 
+      FROM tickets 
+      JOIN events ON tickets.eventId = events.id 
+      WHERE tickets.userId = ?
+    ''', [userId]);
+    
+    return tickets;
   }
 
   // Get user by email

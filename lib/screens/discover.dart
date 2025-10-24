@@ -18,6 +18,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
   List<Event> allEvents = [];
   List<Event> filteredEvents = [];
   List<String> cities = [];
+  int? currentUserId;
   
   String selectedType = 'All';
   String? selectedCity;
@@ -42,24 +43,33 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
   }
 
   // Load events and cities from database
+  // Load events and cities from database
   Future<void> loadData() async {
     setState(() {
       isLoading = true;
     });
     
-    // Get all events
-    allEvents = await dbService.getEvents();
-    filteredEvents = allEvents;
+    // Get current user ID
+    currentUserId = await storageService.getUserId();
     
-    // Get all cities
-    cities = await dbService.getCities();
-    
-    // Cache events for offline use
-    List<Map<String, dynamic>> eventMaps = [];
-    for (var event in allEvents) {
-      eventMaps.add(event.toMap());
+    if (currentUserId != null) {
+      // Get all events with favorite status for this user
+      final List<Map<String, dynamic>> eventMaps = 
+          await dbService.getEventsWithFavoriteStatus(currentUserId!);
+      
+      allEvents = [];
+      for (var map in eventMaps) {
+        allEvents.add(Event.fromMap(map));
+      }
+      
+      filteredEvents = allEvents;
+      
+      // Get all cities
+      cities = await dbService.getCities();
+      
+      // Cache events for offline use
+      await storageService.cacheEvents(eventMaps);
     }
-    await storageService.cacheEvents(eventMaps);
     
     setState(() {
       isLoading = false;
@@ -93,19 +103,13 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
   }
 
   // Toggle favorite
-  void toggleFavorite(Event event) async {
+  void toggleFavorite(Event event) async {  
     bool newStatus = event.isFavorite == 0;
-    await dbService.toggleFavorite(event.id!, newStatus);
+    await dbService.toggleFavorite(event.id!, currentUserId!, newStatus);
     
     setState(() {
       event.isFavorite = newStatus ? 1 : 0;
     });
-    
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(newStatus ? 'Added to favorites' : 'Removed from favorites'),
-      ),
-    );
   }
 
   // Show date picker
