@@ -184,7 +184,11 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                 itemBuilder: (context, index) {
                   String type = eventTypes[index];
                   bool isSelected = selectedType == type;
-                  
+
+                  // Get theme colors for dark mode support
+                  final theme = Theme.of(context);
+                  final isDark = theme.brightness == Brightness.dark;
+                              
                   return Padding(
                     padding: const EdgeInsets.only(right: 8),
                     child: ChoiceChip(
@@ -198,7 +202,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                       },
                       selectedColor: const Color(0xFF4F46E5),
                       labelStyle: TextStyle(
-                        color: isSelected ? Colors.white : Colors.black,
+                        color: isSelected ? Colors.white : (isDark ? Colors.white : Colors.black),
                       ),
                     ),
                   );
@@ -212,24 +216,30 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
               child: Row(
                 children: [
                   // Date filter
-                  Expanded(
+                  Flexible(
+                    flex: selectedDate != null ? 3 : 2,
                     child: OutlinedButton.icon(
                       onPressed: showDatePickerDialog,
-                      icon: const Icon(Icons.calendar_today),
+                      icon: const Icon(Icons.calendar_today, size: 16),
                       label: Text(
-                        selectedDate ?? 'Select Date',
+                        selectedDate ?? 'Date',
                         style: const TextStyle(fontSize: 12),
+                        overflow: TextOverflow.ellipsis,
                       ),
                       style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 12,
+                        ),
                       ),
                     ),
                   ),
                   
                   if (selectedDate != null) ...[
-                    const SizedBox(width: 8),
                     IconButton(
-                      icon: const Icon(Icons.clear),
+                      icon: const Icon(Icons.clear, size: 20),
+                      padding: const EdgeInsets.all(4),
+                      constraints: const BoxConstraints(),
                       onPressed: () {
                         setState(() {
                           selectedDate = null;
@@ -242,28 +252,31 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                   const SizedBox(width: 8),
                   
                   // City filter
-                  Expanded(
+                  Flexible(
+                    flex: 2,
                     child: DropdownButtonFormField<String>(
                       initialValue: selectedCity,
                       decoration: InputDecoration(
                         contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 12,
+                          horizontal: 8,
                           vertical: 8,
                         ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
+                        isDense: true,
                       ),
                       hint: const Text('City', style: TextStyle(fontSize: 12)),
+                      isExpanded: true,
                       items: [
                         const DropdownMenuItem(
                           value: null,
-                          child: Text('All Cities'),
+                          child: Text('All Cities', style: TextStyle(fontSize: 12)),
                         ),
                         ...cities.map((city) {
                           return DropdownMenuItem(
                             value: city,
-                            child: Text(city),
+                            child: Text(city, style: const TextStyle(fontSize: 12)),
                           );
                         }),
                       ],

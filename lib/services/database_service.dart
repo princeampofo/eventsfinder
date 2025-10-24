@@ -14,6 +14,12 @@ class DatabaseService {
     return await db.insert('users', user);
   }
 
+  // Insert event
+  Future<int> insertEvent(Map<String, dynamic> event) async {
+    final db = await _dbHelper.database;
+    return await db.insert('events', event);
+  }
+
   // Toggle favorite status for specific user
   Future<void> toggleFavorite(int eventId, int userId, bool status) async {
     final db = await _dbHelper.database;

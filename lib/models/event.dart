@@ -20,7 +20,7 @@ class Event {
     required this.venue,
     required this.price,
     required this.description,
-    this.isFavorite,
+    this.isFavorite = 0,
     this.imageUrl,  // Optional image URL
   });
 
@@ -44,15 +44,15 @@ class Event {
   factory Event.fromMap(Map<String, dynamic> map) {
     return Event(
       id: map['id'],
-      title: map['title'],
-      type: map['type'],
-      date: map['date'],
-      city: map['city'],
-      venue: map['venue'],
-      price: map['price'],
-      description: map['description'],
-      isFavorite: map['isFavorite'],
-      imageUrl: map['imageUrl'],
+      title: map['title'] ?? '',
+      type: map['type'] ?? '',
+      date: map['date'] ?? '',
+      city: map['city'] ?? '',
+      venue: map['venue'] ?? '',
+      price: (map['price'] ?? 0.0).toDouble(),
+      description: map['description'] ?? '',
+      isFavorite: map['isFavorite'] ?? 0,
+      imageUrl: map['imageUrl'] ?? '',
     );
   }
 }
