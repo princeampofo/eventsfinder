@@ -580,6 +580,17 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                                                 event.date,
                                                 style: const TextStyle(color: Colors.grey),
                                               ),
+                                              const SizedBox(width: 8),
+                                              const Icon(
+                                                Icons.access_time,
+                                                size: 16,
+                                                color: Colors.grey,
+                                              ),
+                                              const SizedBox(width: 4),
+                                              Text(
+                                                event.time,
+                                                style: const TextStyle(color: Colors.grey),
+                                              ),
                                               const SizedBox(width: 16),
                                               const Icon(
                                                 Icons.location_on,

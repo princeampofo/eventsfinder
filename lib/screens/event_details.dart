@@ -193,8 +193,8 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                   // Date and time
                   _buildInfoRow(
                     Icons.calendar_today,
-                    'Date',
-                    event.date,
+                    'Date & Time',
+                    '${event.date} at ${event.time}',
                   ),
                   const SizedBox(height: 16),
                   

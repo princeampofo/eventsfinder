@@ -23,6 +23,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
 
   String selectedType = 'Concert';
   String? selectedDate;
+  String? selectedTime;
   bool isLoading = false;
   
   final List<String> eventTypes = [
@@ -49,6 +50,23 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     }
   }
 
+  void showTimePickerDialog() async {
+    TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+    
+    if (pickedTime != null) {
+      setState(() {
+        // Format time as HH:MM AM/PM
+        final hour = pickedTime.hourOfPeriod;
+        final minute = pickedTime.minute.toString().padLeft(2, '0');
+        final period = pickedTime.period == DayPeriod.am ? 'AM' : 'PM';
+        selectedTime = '${hour == 0 ? 12 : hour}:$minute $period';
+      });
+    }
+  }
+
   // Publish event
   void publishEvent() async {
     String title = titleController.text.trim();
@@ -62,7 +80,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
 
     // Validate fields
     if (title.isEmpty || city.isEmpty || venue.isEmpty || 
-        priceText.isEmpty || description.isEmpty || selectedDate == null ) {
+        priceText.isEmpty || description.isEmpty || selectedDate == null || selectedTime == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please fill all fields')),
       );
@@ -109,6 +127,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
       'title': title,
       'type': selectedType,
       'date': selectedDate,
+      'time': selectedTime,
       'city': city,
       'venue': venue,
       'price': price,
@@ -141,7 +160,8 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
       longitudeController.clear();
       setState(() {
         selectedDate = null;
-        selectedType = 'Concert';
+        selectedTime = null;
+        selectedType = 'Meetup';
       });
     }
   }
@@ -222,6 +242,27 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                   style: TextStyle(
                     // should be white in dark mode
                     color: Theme.of(context).brightness == Brightness.dark ? Colors.white : selectedDate == null ? Colors.grey : Colors.black,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Time picker
+            InkWell(
+              onTap: showTimePickerDialog,
+              child: InputDecorator(
+                decoration: InputDecoration(
+                  labelText: 'Event Time',
+                  prefixIcon: const Icon(Icons.access_time),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: Text(
+                  selectedTime ?? 'Select time',
+                  style: TextStyle(
+                    color: selectedTime == null ? Colors.grey : Colors.black,
                   ),
                 ),
               ),

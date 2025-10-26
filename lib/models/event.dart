@@ -4,6 +4,7 @@ class Event {
   String title;
   String type;
   String date;
+  String time;
   String city;
   String venue;
   double price;
@@ -19,6 +20,7 @@ class Event {
     required this.title,
     required this.type,
     required this.date,
+    required this.time,
     required this.city,
     required this.venue,
     required this.price,
@@ -37,6 +39,7 @@ class Event {
       'title': title,
       'type': type,
       'date': date,
+      'time': time,
       'city': city,
       'venue': venue,
       'price': price,
@@ -55,6 +58,7 @@ class Event {
       title: map['title'] ?? '',
       type: map['type'] ?? '',
       date: map['date'] ?? '',
+      time: map['time'] ?? '',
       city: map['city'] ?? '',
       venue: map['venue'] ?? '',
       price: (map['price'] ?? 0.0).toDouble(),
