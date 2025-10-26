@@ -18,7 +18,9 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   final TextEditingController priceController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController imageUrlController = TextEditingController();
-  
+  final TextEditingController latitudeController = TextEditingController();
+  final TextEditingController longitudeController = TextEditingController();
+
   String selectedType = 'Concert';
   String? selectedDate;
   bool isLoading = false;
@@ -55,14 +57,39 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     String priceText = priceController.text.trim();
     String description = descriptionController.text.trim();
     String imageUrl = imageUrlController.text.trim();
+    String latitudeText = latitudeController.text.trim();
+    String longitudeText = longitudeController.text.trim();
 
     // Validate fields
     if (title.isEmpty || city.isEmpty || venue.isEmpty || 
-        priceText.isEmpty || description.isEmpty || selectedDate == null) {
+        priceText.isEmpty || description.isEmpty || selectedDate == null ) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please fill all fields')),
       );
       return;
+    }
+    // Parse coordinates if provided
+    double? latitude;
+    double? longitude;
+    
+    if (latitudeText.isNotEmpty && longitudeText.isNotEmpty) {
+      latitude = double.tryParse(latitudeText);
+      longitude = double.tryParse(longitudeText);
+      
+      if (latitude == null || longitude == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please enter valid coordinates')),
+        );
+        return;
+      }
+      
+      // Validate coordinate ranges
+      if (latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Coordinates out of valid range')),
+        );
+        return;
+      }
     }
 
     double? price = double.tryParse(priceText);
@@ -87,6 +114,8 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
       'price': price,
       'description': description,
       'imageUrl': imageUrl.isEmpty ? 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800' : imageUrl,
+      'latitude': latitude ?? 37.7749,
+      'longitude': longitude ?? -122.4194,
     });
 
     setState(() {
@@ -108,6 +137,8 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
       descriptionController.clear();
       imageUrlController.clear();
       descriptionController.clear();
+      latitudeController.clear();
+      longitudeController.clear();
       setState(() {
         selectedDate = null;
         selectedType = 'Concert';
@@ -262,6 +293,47 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                 ),
               ),
               keyboardType: TextInputType.url,
+            ),
+            const SizedBox(height: 16),
+            // Location section
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: latitudeController,
+                    decoration: InputDecoration(
+                      labelText: 'Latitude (Optional)',
+                      hintText: '33.7490',
+                      prefixIcon: const Icon(Icons.my_location),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                      signed: true,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: TextField(
+                    controller: longitudeController,
+                    decoration: InputDecoration(
+                      labelText: 'Longitude (Optional)',
+                      hintText: '-84.3880',
+                      prefixIcon: const Icon(Icons.location_on),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                      signed: true,
+                    ),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 32),      
             // Publish button

@@ -48,7 +48,9 @@ class DatabaseHelper {
         venue TEXT,
         price REAL,
         description TEXT,
-        imageUrl TEXT
+        imageUrl TEXT,
+        latitude REAL,
+        longitude REAL
       )
     ''');
 
@@ -88,6 +90,8 @@ class DatabaseHelper {
       'price': 25.0,
       'description': 'A live indie concert featuring local bands.',
       'imageUrl': 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800',
+      'latitude': 37.7749,
+      'longitude': -122.4194,
     });
 
     await db.insert('events', {
@@ -99,6 +103,8 @@ class DatabaseHelper {
       'price': 50.0,
       'description': 'Learn the basics of photography from professionals.',
       'imageUrl': 'https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=800',
+      'latitude': 34.0522,
+      'longitude': -118.2437,
     });
 
     await db.insert('events', {
@@ -110,6 +116,8 @@ class DatabaseHelper {
       'price': 15.0,
       'description': 'Join us for an exciting community soccer match.',
       'imageUrl': 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=800',
+      'latitude': 41.8781,
+      'longitude': -87.6298,
     });
 
     await db.insert('events', {
@@ -121,6 +129,8 @@ class DatabaseHelper {
       'price': 0.0,
       'description': 'Network with tech professionals and entrepreneurs.',
       'imageUrl': 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800',
+      'latitude': 40.7128,
+      'longitude': -74.0060
     });
 
     await db.insert('events', {
@@ -132,6 +142,8 @@ class DatabaseHelper {
       'price': 20.0,
       'description': 'Experience contemporary art from emerging artists.',
       'imageUrl': 'https://images.unsplash.com/photo-1531243269054-5ebf6f34081e?w=800',
+      'latitude': 34.0522,
+      'longitude': -118.2437
     });
 
     await db.insert('events', {
@@ -143,17 +155,21 @@ class DatabaseHelper {
       'price': 30.0,
       'description': 'Enjoy a night of smooth jazz performances.',
       'imageUrl': 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=800',
+      'latitude': 29.9511,
+      'longitude': 30.2672,
     });
 
     await db.insert('events', {
       'title': 'Culinary Arts Workshop',
       'type': 'Workshop',
       'date': '2025-11-30',
-      'city': 'San Francisco',
-      'venue': 'Culinary School',
+      'city': 'Atlanta',
+      'venue': 'Gourmet Kitchen',
       'price': 75.0,
       'description': 'Master the art of cooking with expert chefs.',
       'imageUrl': 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800',
+      'latitude': 37.7749,
+      'longitude': -122.4194
     });
 
     await db.insert('events', {
@@ -165,6 +181,8 @@ class DatabaseHelper {
       'price': 40.0,
       'description': 'Participate in the annual city marathon event.',
       'imageUrl': 'https://images.unsplash.com/photo-1508609349937-5ec4ae374ebf?w=800',
+      'latitude': 42.3601,
+      'longitude': -71.0589
     });
   }
 }

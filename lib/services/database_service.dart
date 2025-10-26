@@ -2,10 +2,12 @@ import 'package:sqflite/sqflite.dart';
 import '../database/db_helper.dart';
 import '../models/event.dart';
 import '../models/user.dart';
+import 'location.dart';
 
 // Service class for database operations
 class DatabaseService {
   final DatabaseHelper _dbHelper = DatabaseHelper();
+  final LocationService _locationService = LocationService();
 
 
   // Register new user
@@ -216,5 +218,47 @@ class DatabaseService {
       return null;
     }
     return User.fromMap(maps.first);
+  }
+
+  // Get nearby events based on user location
+  Future<List<Event>> getNearbyEvents({
+    required double userLat,
+    required double userLon,
+    required int userId,
+    double radiusKm = 100, // Default 100km radius
+  }) async {
+    // Get all events with favorite status
+    final List<Map<String, dynamic>> eventMaps = 
+        await getEventsWithFavoriteStatus(userId);
+    
+    List<Event> nearbyEvents = [];
+    
+    for (var map in eventMaps) {
+      Event event = Event.fromMap(map);
+      
+      // Only include events with coordinates
+      if (event.latitude != null && event.longitude != null) {
+        // Calculate distance
+        double distance = _locationService.calculateDistance(
+          userLat,
+          userLon,
+          event.latitude!,
+          event.longitude!,
+        );
+        
+        // Check if within radius
+        if (distance <= radiusKm) {
+          event.distanceFromUser = distance;
+          nearbyEvents.add(event);
+        }
+      }
+    }
+    
+    // Sort by distance (closest first)
+    nearbyEvents.sort((a, b) => 
+      a.distanceFromUser!.compareTo(b.distanceFromUser!)
+    );
+    
+    return nearbyEvents;
   }
 }

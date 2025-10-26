@@ -10,6 +10,9 @@ class Event {
   String description;
   int? isFavorite;
   String? imageUrl;  // Add image URL field
+  double? latitude; // Event latitude
+  double? longitude; // Event longitude
+  double? distanceFromUser;
 
   Event({
     this.id,
@@ -22,6 +25,9 @@ class Event {
     required this.description,
     this.isFavorite = 0,
     this.imageUrl,  // Optional image URL
+    this.latitude,
+    this.longitude,
+    this.distanceFromUser,
   });
 
   // Convert Event to Map for database
@@ -37,6 +43,8 @@ class Event {
       'description': description,
       'isFavorite': isFavorite,
       'imageUrl': imageUrl,
+      'latitude': latitude,
+      'longitude': longitude,
     };
   }
 
@@ -53,6 +61,8 @@ class Event {
       description: map['description'] ?? '',
       isFavorite: map['isFavorite'] ?? 0,
       imageUrl: map['imageUrl'] ?? '',
+      latitude: map['latitude'] != null ? (map['latitude'] as num).toDouble() : null,
+      longitude: map['longitude'] != null ? (map['longitude'] as num).toDouble() : null,
     );
   }
 }

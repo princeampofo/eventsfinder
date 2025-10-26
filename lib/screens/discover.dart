@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import '../services/database_service.dart';
 import '../services/storage_service.dart';
+import '../services/location.dart';
 import '../models/event.dart';
 import 'event_details.dart';
+import 'package:geolocator/geolocator.dart';
 
 class DiscoverScreen extends StatefulWidget {
   const DiscoverScreen({super.key});
@@ -14,11 +16,13 @@ class DiscoverScreen extends StatefulWidget {
 class _DiscoverScreenState extends State<DiscoverScreen> {
   final DatabaseService dbService = DatabaseService();
   final StorageService storageService = StorageService();
+  final LocationService locationService = LocationService();
   
   List<Event> allEvents = [];
   List<Event> filteredEvents = [];
   List<String> cities = [];
   int? currentUserId;
+  Position? userLocation;
   
   String selectedType = 'All';
   String? selectedCity;
@@ -29,6 +33,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
   
   final List<String> eventTypes = [
     'All',
+    'Near Me',
     'Concert',
     'Workshop',
     'Sports',
@@ -42,7 +47,6 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
     loadData();
   }
 
-  // Load events and cities from database
   // Load events and cities from database
   Future<void> loadData() async {
     setState(() {
@@ -82,6 +86,13 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
     if (searchQuery.isNotEmpty) {
       // Search by title
       filteredEvents = await dbService.searchEventsByTitle(searchQuery);
+    } else if (selectedType == 'Near Me') {
+      // Show nearby events
+      await loadNearbyEvents();
+      setState(() {
+        isLoading = false;
+      });
+      return;
     } else if (selectedType != 'All' || selectedDate != null || selectedCity != null) {
       // Apply filters
       filteredEvents = await dbService.getFilteredEvents(
@@ -99,14 +110,94 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
     });
   }
 
+  // Load nearby events based on user location
+  Future<void> loadNearbyEvents() async {
+    if (currentUserId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please login to see nearby events')),
+      );
+      filteredEvents = [];
+      return;
+    }
+
+    // Check if we have cached location
+    if (userLocation == null) {
+      // Get user location
+      Position? location = await locationService.getUserLocation();
+      
+      if (location == null) {
+        // Show permission dialog
+        showLocationPermissionDialog();
+        filteredEvents = [];
+        return;
+      }
+      
+      userLocation = location;
+    }
+    
+    // Get nearby events
+    filteredEvents = await dbService.getNearbyEvents(
+      userLat: userLocation!.latitude,
+      userLon: userLocation!.longitude,
+      userId: currentUserId!,
+      radiusKm: 100, // 100km radius
+    );
+    
+    if (filteredEvents.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No events found within 100km')),
+      );
+    }
+  }
+
+  // Show location permission dialog
+  void showLocationPermissionDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Location Permission Required'),
+        content: const Text(
+          'To see nearby events, please enable location permissions. '
+          'This allows us to show you events happening near your current location.',
+        ),
+        actions: [
+          TextButton(
+            child: const Text('Cancel'),
+            onPressed: () => Navigator.pop(context),
+          ),
+          TextButton(
+            child: const Text('Open Settings'),
+            onPressed: () {
+              Navigator.pop(context);
+              locationService.openSettings();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
   // Toggle favorite
-  void toggleFavorite(Event event) async {  
+  void toggleFavorite(Event event) async {
+    if (currentUserId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please login to add favorites')),
+      );
+      return;
+    }
+    
     bool newStatus = event.isFavorite == 0;
     await dbService.toggleFavorite(event.id!, currentUserId!, newStatus);
     
     setState(() {
       event.isFavorite = newStatus ? 1 : 0;
     });
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(newStatus ? 'Added to favorites' : 'Removed from favorites'),
+      ),
+    );
   }
 
   // Show date picker
@@ -181,15 +272,20 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                 itemBuilder: (context, index) {
                   String type = eventTypes[index];
                   bool isSelected = selectedType == type;
-
-                  // Get theme colors for dark mode support
-                  final theme = Theme.of(context);
-                  final isDark = theme.brightness == Brightness.dark;
-                              
+                  
                   return Padding(
                     padding: const EdgeInsets.only(right: 8),
                     child: ChoiceChip(
-                      label: Text(type),
+                      label: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (type == 'Near Me') ...[
+                            const Icon(Icons.near_me, size: 16, color: Colors.white),
+                            const SizedBox(width: 4),
+                          ],
+                          Text(type),
+                        ],
+                      ),
                       selected: isSelected,
                       onSelected: (selected) {
                         setState(() {
@@ -199,7 +295,9 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                       },
                       selectedColor: const Color(0xFF4F46E5),
                       labelStyle: TextStyle(
-                        color: isSelected ? Colors.white : (isDark ? Colors.white : Colors.black),
+                        color: isSelected 
+                            ? Colors.white 
+                            : Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                   );
@@ -225,7 +323,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                       ),
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 18,
+                          horizontal: 8,
                           vertical: 12,
                         ),
                       ),
@@ -252,7 +350,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                   Flexible(
                     flex: 2,
                     child: DropdownButtonFormField<String>(
-                      initialValue: selectedCity,
+                      value: selectedCity,
                       decoration: InputDecoration(
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 8,
@@ -343,16 +441,17 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => EventDetailsScreen(event: event),
+                                      builder: (context) =>
+                                          EventDetailsScreen(event: event),
                                     ),
-                                  );
+                                  ).then((_) => loadData());
                                 },
                                 borderRadius: BorderRadius.circular(12),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    // Event image
-                                    if (event.imageUrl != null && event.imageUrl!.isNotEmpty)
+                                    // Event Image
+                                    if (event.imageUrl != null) 
                                       ClipRRect(
                                         borderRadius: const BorderRadius.only(
                                           topLeft: Radius.circular(12),
@@ -360,46 +459,40 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                                         ),
                                         child: Image.network(
                                           event.imageUrl!,
-                                          height: 150,
+                                          height: 180,
                                           width: double.infinity,
                                           fit: BoxFit.cover,
                                           errorBuilder: (context, error, stackTrace) {
+                                            // Fallback if image fails to load
                                             return Container(
-                                              height: 150,
+                                              height: 180,
                                               color: Colors.grey[300],
                                               child: const Icon(
-                                                Icons.image,
-                                                size: 50,
+                                                Icons.event,
+                                                size: 64,
                                                 color: Colors.grey,
                                               ),
                                             );
                                           },
-                                        ),
-                                      )
-                                    else
-                                      Container(
-                                        height: 150,
-                                        decoration: BoxDecoration(
-                                          gradient: LinearGradient(
-                                            colors: [
-                                              const Color(0xFF4F46E5),
-                                              const Color(0xFF4F46E5).withOpacity(0.7),
-                                            ],
-                                          ),
-                                          borderRadius: const BorderRadius.only(
-                                            topLeft: Radius.circular(12),
-                                            topRight: Radius.circular(12),
-                                          ),
-                                        ),
-                                        child: const Center(
-                                          child: Icon(
-                                            Icons.event,
-                                            size: 50,
-                                            color: Colors.white,
-                                          ),
+                                          loadingBuilder: (context, child, loadingProgress) {
+                                            if (loadingProgress == null) return child;
+                                            return Container(
+                                              height: 180,
+                                              color: Colors.grey[200],
+                                              child: Center(
+                                                child: CircularProgressIndicator(
+                                                  value: loadingProgress.expectedTotalBytes != null
+                                                      ? loadingProgress.cumulativeBytesLoaded /
+                                                          loadingProgress.expectedTotalBytes!
+                                                      : null,
+                                                ),
+                                              ),
+                                            );
+                                          },
                                         ),
                                       ),
                                     
+                                    // Event Details
                                     Padding(
                                       padding: const EdgeInsets.all(16),
                                       child: Column(
@@ -429,6 +522,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                                               ),
                                             ],
                                           ),
+                                          
                                           const SizedBox(height: 8),
                                           
                                           Row(
@@ -506,6 +600,30 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                                               ),
                                             ],
                                           ),
+                                          
+                                          // Show distance if available (Near Me filter)
+                                          if (event.distanceFromUser != null) ...[
+                                            const SizedBox(height: 4),
+                                            Row(
+                                              children: [
+                                                const Icon(
+                                                  Icons.near_me,
+                                                  size: 16,
+                                                  color: Color(0xFF4F46E5),
+                                                ),
+                                                const SizedBox(width: 4),
+                                                Text(
+                                                  locationService.formatDistance(
+                                                    event.distanceFromUser!
+                                                  ),
+                                                  style: const TextStyle(
+                                                    color: Color(0xFF4F46E5),
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
                                         ],
                                       ),
                                     ),
