@@ -66,8 +66,6 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
         allEvents.add(Event.fromMap(map));
       }
       
-      filteredEvents = allEvents;
-      
       // Get all cities
       cities = await dbService.getCities();
     }
@@ -75,13 +73,18 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
     setState(() {
       isLoading = false;
     });
+
+    // Reapply current filters after loading data (without showing loading indicator)
+    applyFilters(showLoading: false);
   }
 
   // Apply filters
-  void applyFilters() async {
-    setState(() {
-      isLoading = true;
-    });
+  void applyFilters({bool showLoading = true}) async {
+    if (showLoading) {
+      setState(() {
+        isLoading = true;
+      });
+    }
     
     if (searchQuery.isNotEmpty) {
       // Search by title
@@ -89,9 +92,11 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
     } else if (selectedType == 'Near Me') {
       // Show nearby events
       await loadNearbyEvents();
-      setState(() {
-        isLoading = false;
-      });
+      if (showLoading) {
+        setState(() {
+          isLoading = false;
+        });
+      }
       return;
     } else if (selectedType != 'All' || selectedDate != null || selectedCity != null) {
       // Apply filters
@@ -105,10 +110,15 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
       filteredEvents = allEvents;
     }
     
-    setState(() {
-      isLoading = false;
-    });
+    if (showLoading) {
+      setState(() {
+        isLoading = false;
+      });
+    } else {
+      setState(() {});
+    }
   }
+  
 
   // Load nearby events based on user location
   Future<void> loadNearbyEvents() async {
