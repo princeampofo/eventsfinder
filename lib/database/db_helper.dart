@@ -82,85 +82,20 @@ class DatabaseHelper {
 
     // Insert dummy events
     await db.insert('events', {
-      'title': 'Indie Night at BlueHall',
-      'type': 'Concert',
-      'date': '2025-11-01',
-      'city': 'Atlanta',
-      'venue': 'Downtown Arena',
-      'price': 25.0,
-      'description': 'A live indie concert featuring local bands.',
-      'imageUrl': 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800',
-      'latitude': 37.7749,
-      'longitude': -122.4194,
-    });
-
-    await db.insert('events', {
-      'title': 'Photography 101',
-      'type': 'Workshop',
-      'date': '2025-11-05',
-      'city': 'Austin',
-      'venue': 'Creative Studio',
-      'price': 50.0,
-      'description': 'Learn the basics of photography from professionals.',
-      'imageUrl': 'https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=800',
-      'latitude': 34.0522,
-      'longitude': -118.2437,
-    });
-
-    await db.insert('events', {
-      'title': 'Community Soccer Match',
+      'title': 'Run for Fun 5K',
       'type': 'Sports',
-      'date': '2025-11-10',
-      'city': 'Chicago',
-      'venue': 'City Stadium',
-      'price': 15.0,
-      'description': 'Join us for an exciting community soccer match.',
-      'imageUrl': 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=800',
-      'latitude': 41.8781,
-      'longitude': -87.6298,
+      'date': '2025-12-05',
+      'city': 'Boston',
+      'venue': 'City Park',
+      'price': 40.0,
+      'description': 'Participate in the annual city marathon event.',
+      'imageUrl': 'https://images.unsplash.com/photo-1508609349937-5ec4ae374ebf?w=800',
+      'latitude': 42.3601,
+      'longitude': -71.0589
     });
 
     await db.insert('events', {
-      'title': 'Tech Networking Night',
-      'type': 'Meetup',
-      'date': '2025-11-15',
-      'city': 'New York',
-      'venue': 'Tech Hub',
-      'price': 0.0,
-      'description': 'Network with tech professionals and entrepreneurs.',
-      'imageUrl': 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800',
-      'latitude': 40.7128,
-      'longitude': -74.0060
-    });
-
-    await db.insert('events', {
-      'title': 'Gallery Opening',
-      'type': 'Art',
-      'date': '2025-11-20',
-      'city': 'Los Angeles',
-      'venue': 'Modern Art Gallery',
-      'price': 20.0,
-      'description': 'Experience contemporary art from emerging artists.',
-      'imageUrl': 'https://images.unsplash.com/photo-1531243269054-5ebf6f34081e?w=800',
-      'latitude': 34.0522,
-      'longitude': -118.2437
-    });
-
-    await db.insert('events', {
-      'title': 'Jazz Evening',
-      'type': 'Concert',
-      'date': '2025-11-25',
-      'city': 'New Orleans',
-      'venue': 'Jazz Club',
-      'price': 30.0,
-      'description': 'Enjoy a night of smooth jazz performances.',
-      'imageUrl': 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=800',
-      'latitude': 29.9511,
-      'longitude': 30.2672,
-    });
-
-    await db.insert('events', {
-      'title': 'Culinary Arts Workshop',
+      'title': 'Gourmet Cooking Workshop',
       'type': 'Workshop',
       'date': '2025-11-30',
       'city': 'Atlanta',
@@ -173,16 +108,84 @@ class DatabaseHelper {
     });
 
     await db.insert('events', {
-      'title': 'Marathon 2025',
-      'type': 'Sports',
-      'date': '2025-12-05',
-      'city': 'Boston',
-      'venue': 'City Park',
-      'price': 40.0,
-      'description': 'Participate in the annual city marathon event.',
-      'imageUrl': 'https://images.unsplash.com/photo-1508609349937-5ec4ae374ebf?w=800',
-      'latitude': 42.3601,
-      'longitude': -71.0589
+      'title': 'Music Jazz Night',
+      'type': 'Concert',
+      'date': '2025-11-25',
+      'city': 'New Orleans',
+      'venue': 'Jazz Club',
+      'price': 30.0,
+      'description': 'Enjoy a night of smooth jazz performances.',
+      'imageUrl': 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=800',
+      'latitude': 29.9511,
+      'longitude': 30.2672,
     });
+
+    await db.insert('events', {
+      'title': 'Unplugged Music Night',
+      'type': 'Concert',
+      'date': '2025-11-01',
+      'city': 'Atlanta',
+      'venue': 'Downtown Arena',
+      'price': 25.0,
+      'description': 'A live indie concert featuring local bands.',
+      'imageUrl': 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800',
+      'latitude': 37.7749,
+      'longitude': -122.4194,
+    });
+    
+    await db.insert('events', {
+      'title': 'Football Friendly Match',
+      'type': 'Sports',
+      'date': '2025-11-10',
+      'city': 'Chicago',
+      'venue': 'City Stadium',
+      'price': 15.0,
+      'description': 'Join us for an exciting community soccer match.',
+      'imageUrl': 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=800',
+      'latitude': 41.8781,
+      'longitude': -87.6298,
+    });
+    
+
+    await db.insert('events', {
+      'title': 'Camera Basics Workshop',
+      'type': 'Workshop',
+      'date': '2025-11-05',
+      'city': 'Austin',
+      'venue': 'Creative Studio',
+      'price': 50.0,
+      'description': 'Learn the basics of photography from professionals.',
+      'imageUrl': 'https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=800',
+      'latitude': 34.0522,
+      'longitude': -118.2437,
+    });
+
+    await db.insert('events', {
+      'title': 'Art Expo 2025',
+      'type': 'Art',
+      'date': '2025-11-20',
+      'city': 'Los Angeles',
+      'venue': 'Modern Art Gallery',
+      'price': 20.0,
+      'description': 'Experience contemporary art from emerging artists.',
+      'imageUrl': 'https://images.unsplash.com/photo-1531243269054-5ebf6f34081e?w=800',
+      'latitude': 34.0522,
+      'longitude': -118.2437
+    });
+
+    await db.insert('events', {
+      'title': 'Tech Innovators Meetup',
+      'type': 'Meetup',
+      'date': '2025-11-15',
+      'city': 'New York',
+      'venue': 'Tech Hub',
+      'price': 0.0,
+      'description': 'Network with tech professionals and entrepreneurs.',
+      'imageUrl': 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800',
+      'latitude': 40.7128,
+      'longitude': -74.0060
+    });
+
+    
   }
 }

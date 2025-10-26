@@ -10,4 +10,6 @@
 
 5. For the UI/UX design, I sought AI assistance to generate design ideas and layouts that would provide an intuitive and visually appealing experience for users.
 
+6. When integrating location services, I used AI to understand the best methods for obtaining and utilizing user location data for event discovery, ensuring users could easily find nearby events.
+
 
