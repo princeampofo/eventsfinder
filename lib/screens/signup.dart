@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../services/database_service.dart';
-import 'main_screen.dart';
 import '../services/storage_service.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -74,16 +73,8 @@ class _SignupScreenState extends State<SignupScreen> {
         const SnackBar(content: Text('Account created successfully!')),
       );
       
-      // Navigate to main screen
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => MainScreen(toggleTheme: widget.toggleTheme)),
-      );
-
-      // set isLoggedIn to true
-      await storageService.saveUserId(  
-        await dbService.getUserByEmail(email).then((user) => user!.id!),
-      );
+      // Go back to login screen
+      Navigator.pop(context);
     }
   }
 
