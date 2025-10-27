@@ -167,30 +167,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     onTap: showSettings,
                   ),
                   
-                  _buildMenuItem(
-                    icon: Icons.info,
-                    title: 'About',
-                    subtitle: 'App version and info',
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: const Text('About'),
-                          content: const Text(
-                            'Local Events Finder v1.0.0\n\n'
-                            'Discover amazing local events in your area.',
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: const Text('OK'),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                  
                   const SizedBox(height: 16),
                   
                   // Logout button
